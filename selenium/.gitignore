@@ -1,0 +1,22 @@
+# Build / IDE files
+target/
+bin/
+.classpath
+.project
+.settings/
+
+# Logs & reports
+logs/
+reports/
+allure-results/
+allure-report/
+extent-report.html
+
+# WebDrivers
+drivers/
+*.exe
+*.log
+
+# OS & IDE junk
+.DS_Store
+Thumbs.db

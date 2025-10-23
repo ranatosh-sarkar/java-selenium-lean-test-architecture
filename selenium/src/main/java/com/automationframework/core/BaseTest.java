@@ -28,7 +28,7 @@ public abstract class BaseTest {
 
         // Navigate to Base URL
         driver.get(config.getProperty("base.url"));
-        LoggerUtil.info("🌐 Navigated to: " + config.getProperty("base.url"));
+        LoggerUtil.info("Navigated to: " + config.getProperty("base.url"));
     }
 
     @AfterMethod(alwaysRun = true)

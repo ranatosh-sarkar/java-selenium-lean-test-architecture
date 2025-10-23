@@ -21,6 +21,17 @@ public class ConfigManager {
             throw new RuntimeException("Failed to load configuration: " + e.getMessage());
         }
     }
+    
+    public static String get(String key) {
+        if (properties == null) {
+            throw new IllegalStateException("Configuration not loaded. Call ConfigManager.loadConfig(env) first.");
+        }
+        String value = properties.getProperty(key);
+        if (value == null) {
+            throw new IllegalArgumentException("Missing property key: " + key);
+        }
+        return value.trim();
+    }
 
     public static ConfigManager getInstance(String env) {
         if (instance == null)

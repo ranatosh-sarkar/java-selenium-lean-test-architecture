@@ -23,6 +23,10 @@ public class LoggerUtil {
     public static void error(String message) {
         log.error(message);
     }
+    
+    public static void error(String msg, Throwable t) { 
+    	log.error(msg, t); 
+    }
 
     public static void debug(String message) {
         log.debug(message);

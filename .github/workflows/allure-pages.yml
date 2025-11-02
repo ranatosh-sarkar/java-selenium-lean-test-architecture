@@ -48,13 +48,9 @@ jobs:
           rm -rf allure-results
           mkdir -p allure-results
 
-#      - name: Run tests (writes RAW to allure-results/)
-#        working-directory: selenium
-#        run: mvn -B -DskipTests=false test
-
-		- name: Run tests (parallel scenarios, writes RAW to allure-results/)
+      - name: Run tests (writes RAW to allure-results/)
         working-directory: selenium
-        run: mvn -B -DskipTests=false -Ddataproviderthreadcount=3 test
+        run: mvn -B -DskipTests=false test
 
       - name: Generate Allure HTML (selenium/reports/allure-report-<ts>/)
         working-directory: selenium

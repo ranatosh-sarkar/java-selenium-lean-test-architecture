@@ -2,8 +2,8 @@ name: Test & Publish Allure to GitHub Pages
 
 on:
   push:
-    branches: [ master ]   # publish only for main pushes
-  workflow_dispatch:      # allow manual run
+    branches: [ master ]        # <-- your default branch
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,7 +13,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,10 +30,10 @@ jobs:
           key: m2-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: m2-${{ runner.os }}-
 
-      - name: Run tests (writes RAW results to allure-results/)
+      - name: Run tests (produces RAW Allure into allure-results/)
         run: mvn -B -DskipTests=false test
 
-      - name: Generate Allure HTML (to reports/allure-report-<ts>/)
+      - name: Generate Allure HTML (reports/allure-report-<ts>/)
         run: mvn -B io.qameta.allure:allure-maven:2.12.0:report
 
       - name: Collect HTML into public/runs/<run_number> + latest + index
@@ -50,7 +49,7 @@ jobs:
           mkdir -p public/latest
           echo '<!doctype html><meta http-equiv="refresh" content="0; url=../runs/'"$RUN_ID"'/index.html">' > public/latest/index.html
 
-          # Simple index of all runs (keeps history)
+          # Simple index listing all runs
           mkdir -p public
           {
             echo '<!doctype html><html><head><meta charset="utf-8"><title>Allure Runs</title>'
@@ -58,7 +57,7 @@ jobs:
             echo '<h1>Allure Reports</h1>'
             echo '<p><a href="latest/">➡️ Latest report</a></p>'
             echo '<h2>History</h2><ul>'
-            for d in $(ls -td public/runs/* | sed 's|public/||'); do
+            for d in $(ls -td public/runs/* 2>/dev/null | sed 's|public/||'); do
               n=$(basename "$d")
               echo "<li><a href=\"$d/index.html\">Run #$n</a></li>"
             done

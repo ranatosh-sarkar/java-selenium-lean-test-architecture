@@ -2,7 +2,7 @@ name: Test & Publish Allure to GitHub Pages
 
 on:
   push:
-    branches: [ main ]   # publish only for main pushes
+    branches: [ master ]   # publish only for main pushes
   workflow_dispatch:      # allow manual run
 
 permissions:

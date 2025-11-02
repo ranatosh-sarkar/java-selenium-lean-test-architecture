@@ -52,7 +52,7 @@ jobs:
 #        working-directory: selenium
 #        run: mvn -B -DskipTests=false test
 
-       - name: Run tests (parallel scenarios, writes RAW to allure-results/)
+		- name: Run tests (parallel scenarios, writes RAW to allure-results/)
         working-directory: selenium
         run: mvn -B -DskipTests=false -Ddataproviderthreadcount=3 test
 
@@ -61,22 +61,29 @@ jobs:
         run: mvn -B io.qameta.allure:allure-maven:2.12.0:report
 
       - name: Collect HTML into repo-root /public
-        shell: bash
         run: |
           set -e
           RUN_ID="${{ github.run_number }}"
-          REPORT_DIR="$(ls -td selenium/reports/allure-report-* 2>/dev/null | head -1)"
+          REPORT_DIR="$(ls -td selenium/reports/allure-report-* | head -1)"
           echo "Latest HTML report: $REPORT_DIR"
-          mkdir -p "public/runs/$RUN_ID"
+
+          mkdir -p public/runs/"$RUN_ID"
           cp -r "$REPORT_DIR"/* "public/runs/$RUN_ID/"
+
+          # Latest redirect
           mkdir -p public/latest
           echo '<!doctype html><meta http-equiv="refresh" content="0; url=../runs/'"$RUN_ID"'/index.html">' > public/latest/index.html
+
+          # Simple index of all runs
           {
             echo '<!doctype html><html><head><meta charset="utf-8"><title>Allure Runs</title>'
             echo '<style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:2rem} a{color:#0a58ca;text-decoration:none} li{margin:.4rem 0}</style></head><body>'
-            echo '<h1>Allure Reports</h1><p><a href="latest/">Latest report</a></p><h2>History</h2><ul>'
+            echo '<h1>Allure Reports</h1>'
+            echo '<p><a href="latest/">Latest report</a></p>'
+            echo '<h2>History</h2><ul>'
             for d in $(ls -td public/runs/* 2>/dev/null | sed 's|public/||'); do
-              n=$(basename "$d"); echo "<li><a href=\"$d/index.html\">Run #$n</a></li>"
+              n=$(basename "$d")
+              echo "<li><a href=\"$d/index.html\">Run #$n</a></li>"
             done
             echo '</ul></body></html>'
           } > public/index.html

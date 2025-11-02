@@ -1,0 +1,70 @@
+name: Test & Publish Allure to GitHub Pages
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+defaults:
+  run:
+    working-directory: selenium   # run all shell steps inside the selenium/ folder
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: m2-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: m2-${{ runner.os }}-
+
+      - name: Run tests
+        run: mvn -B -DskipTests=false test
+
+      - name: Generate Allure HTML
+        run: mvn -B io.qameta.allure:allure-maven:2.12.0:report
+
+      - name: Collect HTML into public
+        run: |
+          set -e
+          RUN_ID="${{ github.run_number }}"
+          REPORT_DIR="$(ls -td reports/allure-report-* | head -1)"
+          mkdir -p ../public/runs/"$RUN_ID"
+          cp -r "$REPORT_DIR"/* "../public/runs/$RUN_ID/"
+          mkdir -p ../public/latest
+          echo '<!doctype html><meta http-equiv="refresh" content="0; url=../runs/'"$RUN_ID"'/index.html">' > ../public/latest/index.html
+          {
+            echo '<!doctype html><html><head><meta charset="utf-8"><title>Allure Runs</title>'
+            echo '<style>body{font-family:system-ui;margin:2rem} a{color:#0a58ca;text-decoration:none} li{margin:.4rem 0}</style></head><body>'
+            echo '<h1>Allure Reports</h1><p><a href="latest/">➡️ Latest report</a></p><h2>History</h2><ul>'
+            for d in $(ls -td ../public/runs/* 2>/dev/null | sed 's|../public/||'); do
+              n=$(basename "$d"); echo "<li><a href=\"$d/index.html\">Run #$n</a></li>"
+            done
+            echo '</ul></body></html>'
+          } > ../public/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public   # path is repo-root/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

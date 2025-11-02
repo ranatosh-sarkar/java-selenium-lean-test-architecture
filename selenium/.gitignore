@@ -1,4 +1,4 @@
-# Build / IDE files
+# --- Build / IDE ---
 target/
 bin/
 .classpath
@@ -9,30 +9,37 @@ bin/
 out/
 .vscode/
 
-# Logs & reports (keep placeholders only)
-logs/
-!logs/.gitkeep
-reports/
-!reports/.gitkeep
-allure-results/
-extent-report.html
-test-output/
-
-# Allure local CLI cache
+# --- Local caches ---
+.m2/
 .allure/
 
-# WebDrivers
+# --- Logs & reports (keep empty dirs via .gitkeep) ---
+logs/
+!logs/.gitkeep
+
+reports/
+!reports/.gitkeep
+reports/extent-reports/
+reports/screenshots/
+allure-results/
+test-output/
+surefire-reports/
+
+# If you ever generated a single-file Extent report:
+reports/extent-reports/*.html
+
+# --- WebDrivers & noisy files ---
 drivers/
 *.exe
-*.log   # or: drivers/*.log
+*.log
 
-# CI artifacts
+# --- CI artifacts (GitHub Pages bundle) ---
 public/
 
-# OS & IDE junk
+# --- OS noise ---
 .DS_Store
 Thumbs.db
 
-# (Optional) temp files
+# --- Optional temp files ---
 *.swp
 ~$*

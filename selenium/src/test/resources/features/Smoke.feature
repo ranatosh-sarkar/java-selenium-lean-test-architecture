@@ -18,7 +18,7 @@ Feature: Perform Smoke Test of Home page validations for Shady Meadows B&B
 
     Examples:
       | expected_title               | welcome_text                 | btn_book_now | btn_check_availability | btn_single_book_now | btn_double_book_now | btn_suite_book_now | btn_form_submit |
-      #| Restful-booker-platform demo | Welcome to Shady Meadows B&B | Book Now     | Check Availability     | Book Now            | Book Now            | Book Now           | Submit          |
+      | Restful-booker-platform demo | Welcome to Shady Meadows B&B | Book Now     | Check Availability     | Book Now            | Book Now            | Book Now           | Submit          |
 
   @SmokeTestB
   Scenario Outline: Header and footer navigation sections are present
@@ -39,5 +39,5 @@ Feature: Perform Smoke Test of Home page validations for Shady Meadows B&B
 
     Examples:
       | expected_title               | welcome_text                 | header_main       | rooms | booking | amenities | location | contact | admin | footer_brand      | contact_us  | quick_links |
-      #| Restful-booker-platform demo | Welcome to Shady Meadows B&B | Shady Meadows B&B | Rooms | Booking | Amenities | Location | Contact | Admin | Shady Meadows B&B | Contact Us  | Quick Links |
+      | Restful-booker-platform demo | Welcome to Shady Meadows B&B | Shady Meadows B&B | Rooms | Booking | Amenities | Location | Contact | Admin | Shady Meadows B&B | Contact Us  | Quick Links |
       

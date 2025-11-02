@@ -68,14 +68,28 @@ public final class AllureReportServer {
         if (!Files.isDirectory(reportsDir)) {
             throw new IllegalStateException("No 'reports' directory under " + base);
         }
+        
         try (Stream<Path> stream = Files.list(reportsDir)) {
-            return stream
-                    .filter(p -> Files.isDirectory(p) &&
-                                 p.getFileName().toString().startsWith("allure-report-"))
-                    .max(Comparator.comparingLong(p -> p.toFile().lastModified()))
-                    .orElseThrow(() -> new IllegalStateException(
-                            "No 'allure-report-*' folder found under " + reportsDir));
-        }
+        	  return stream
+        	    .filter(p -> Files.isDirectory(p) &&
+        	                 p.getFileName().toString().startsWith("allure-report-") &&
+        	                 Files.exists(p.resolve("index.html")))
+        	    .max(Comparator.comparingLong(p -> {
+        	        try { return Files.getLastModifiedTime(p.resolve("index.html")).toMillis(); }
+        	        catch (IOException e) { return 0L; }
+        	    }))
+        	    .orElseThrow(() -> new IllegalStateException(
+        	        "No 'allure-report-*' folder with index.html under " + reportsDir));
+        	}
+        
+//        try (Stream<Path> stream = Files.list(reportsDir)) {
+//            return stream
+//                    .filter(p -> Files.isDirectory(p) &&
+//                                 p.getFileName().toString().startsWith("allure-report-"))
+//                    .max(Comparator.comparingLong(p -> p.toFile().lastModified()))
+//                    .orElseThrow(() -> new IllegalStateException(
+//                            "No 'allure-report-*' folder found under " + reportsDir));
+//        }
     }
 
     private static int resolvePort(String[] args) {

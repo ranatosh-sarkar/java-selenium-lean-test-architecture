@@ -31,12 +31,17 @@ public class WaitHelper {
         return wait.until(ExpectedConditions.urlContains(fragment));
     }
 
+    /** New: wait until page title is non-empty */
+    public void waitForNonEmptyTitle() {
+        wait.until(d -> !d.getTitle().isEmpty());
+    }
+
     public void smallPause(long millis) { // use sparingly
         try { Thread.sleep(millis); } catch (InterruptedException ignored) {}
     }
 
-    public void withCustomTimeout(Duration timeout, Runnable block) {
-        WebDriverWait temp = new WebDriverWait(driver, timeout);
-        try { block.run(); } finally { /* nothing — extend as needed */ }
+    public <T> T withCustomTimeout(Duration timeout, java.util.function.Function<WebDriver, T> condition) {
+    	WebDriverWait temp = new WebDriverWait(driver, timeout);
+    	return temp.until(condition);
     }
 }

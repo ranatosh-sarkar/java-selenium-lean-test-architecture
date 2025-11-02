@@ -4,19 +4,35 @@ bin/
 .classpath
 .project
 .settings/
+.idea/
+*.iml
+out/
+.vscode/
 
-# Logs & reports
+# Logs & reports (keep placeholders only)
 logs/
+!logs/.gitkeep
 reports/
+!reports/.gitkeep
 allure-results/
-allure-report/
 extent-report.html
+test-output/
+
+# Allure local CLI cache
+.allure/
 
 # WebDrivers
 drivers/
 *.exe
-*.log
+*.log   # or: drivers/*.log
+
+# CI artifacts
+public/
 
 # OS & IDE junk
 .DS_Store
 Thumbs.db
+
+# (Optional) temp files
+*.swp
+~$*

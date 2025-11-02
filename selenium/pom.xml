@@ -1,140 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <groupId>com.automationframework</groupId>
-    <artifactId>automation_framework</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
+  <modelVersion>4.0.0</modelVersion>
 
-    <name>Automation Framework</name>
-    <description>Industry-grade Selenium + TestNG + Cucumber framework</description>
+  <groupId>com.automationframework</groupId>
+  <artifactId>automation_framework</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
-        <allure.version>2.29.0</allure.version>
-    </properties>
+  <name>Automation Framework</name>
+  <description>Industry-grade Selenium + TestNG + Cucumber framework</description>
 
-    <!-- ====================== DEPENDENCIES ====================== -->
-    <dependencies>
-        <!-- Selenium -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>4.25.0</version>
-        </dependency>
+  <properties>
+	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	  <maven.compiler.source>15</maven.compiler.source>
+	  <maven.compiler.target>15</maven.compiler.target>
+	  <allure.version>2.29.0</allure.version>
+	
+	  <!-- One timestamp per Eclipse Maven run -->
+	  <maven.build.timestamp.format>yyyyMMdd_HHmmss</maven.build.timestamp.format>
+	  <run.id>${maven.build.timestamp}</run.id>
+	
+	  <!-- Use a STABLE raw dir; timestamp only the HTML report -->
+	  <raw.results.dir>${project.basedir}/allure-results</raw.results.dir>
+	  <html.report.dir>${project.basedir}/reports/allure-report-${run.id}</html.report.dir>
+  </properties>
 
-        <!-- TestNG -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>7.10.2</version>
-            <scope>test</scope>
-        </dependency>
+  <dependencies>
+    <!-- Selenium -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>4.25.0</version>
+    </dependency>
+    
+	<dependency>
+	  <groupId>org.apache.maven.shared</groupId>
+	  <artifactId>maven-invoker</artifactId>
+	  <version>3.2.0</version>
+	  <scope>test</scope>
+	</dependency>
 
-        <!-- Cucumber (Java + TestNG) -->
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>7.18.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-testng</artifactId>
-            <version>7.18.1</version>
-        </dependency>
+    <!-- TestNG (compile scope, because you reference it under src/main) -->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>7.10.2</version>
+    </dependency>
 
-        <!-- WebDriverManager -->
-        <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>5.9.2</version>
-        </dependency>
+    <!-- Cucumber -->
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>7.18.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-testng</artifactId>
+      <version>7.18.1</version>
+    </dependency>
 
-        <!-- Apache POI (Excel reading) -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>5.3.0</version>
-        </dependency>
+    <!-- WebDriverManager -->
+    <dependency>
+      <groupId>io.github.bonigarcia</groupId>
+      <artifactId>webdrivermanager</artifactId>
+      <version>5.9.2</version>
+    </dependency>
 
-        <!-- Jackson (JSON parsing) -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.18.1</version>
-        </dependency>
+    <!-- Log4j2 -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.24.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.24.2</version>
+    </dependency>
 
-        <!-- Log4j2 -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.24.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.24.2</version>
-        </dependency>
+    <!-- Allure -->
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-testng</artifactId>
+      <version>${allure.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-cucumber7-jvm</artifactId>
+      <version>${allure.version}</version>
+    </dependency>
 
-        <!-- Allure TestNG Integration -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-testng</artifactId>
-            <version>${allure.version}</version>
-        </dependency>
+    <!-- Commons IO (screenshots) -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.16.1</version>
+    </dependency>
+  </dependencies>
 
-        <!-- Extent Reports (Optional) -->
-        <dependency>
-            <groupId>com.aventstack</groupId>
-            <artifactId>extentreports</artifactId>
-            <version>5.1.1</version>
-        </dependency>
-        
-        <dependency>
-  			<groupId>commons-io</groupId>
-  			<artifactId>commons-io</artifactId>
-  			<version>2.16.1</version>
-		</dependency>
-    </dependencies>
-
-    <!-- ====================== BUILD PLUGINS ====================== -->
-    <build>
-        <plugins>
-            <!-- Maven Compiler -->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
-
-            <!-- Surefire (TestNG execution) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-                <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                    <testFailureIgnore>false</testFailureIgnore>
-                </configuration>
-            </plugin>
-
-            <!-- Allure Maven Plugin -->
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>2.12.0</version>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+	    <plugins>
+	    <!-- Java compiler -->
+	    <plugin>
+	      <artifactId>maven-compiler-plugin</artifactId>
+	      <version>3.13.0</version>
+	      <configuration>
+	        <source>${maven.compiler.source}</source>
+	        <target>${maven.compiler.target}</target>
+	      </configuration>
+	    </plugin>
+	
+	    <!-- Run TestNG and tell the Allure adapter where to write RAW results -->
+	    <plugin>
+	      <groupId>org.apache.maven.plugins</groupId>
+	      <artifactId>maven-surefire-plugin</artifactId>
+	      <version>3.2.5</version>
+	      <configuration>
+	        <suiteXmlFiles>
+	          <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+	        </suiteXmlFiles>
+	        <systemPropertyVariables>
+	          <!-- Cucumber/Allure adapter reads this -->
+	          <allure.results.directory>${raw.results.dir}</allure.results.directory>
+	          <!-- Pass project baseDir for hooks/create-dirs -->
+	          <project.basedir>${project.basedir}</project.basedir>
+	        </systemPropertyVariables>
+	      </configuration>
+	    </plugin>
+	
+	    <!-- Build Allure HTML from RAW into timestamped folder -->
+	    <plugin>
+	      <groupId>io.qameta.allure</groupId>
+	      <artifactId>allure-maven</artifactId>
+	      <version>2.12.0</version>
+	      <configuration>
+	        <resultsDirectory>${raw.results.dir}</resultsDirectory>
+	        <reportDirectory>${html.report.dir}</reportDirectory>
+	      </configuration>
+	      <executions>
+	        <execution>
+	          <id>allure-report</id>
+	          <phase>verify</phase>
+	          <goals>
+	            <goal>report</goal>
+	          </goals>
+	        </execution>
+	      </executions>
+	    </plugin>
+	  </plugins>
+  </build>
 
 </project>

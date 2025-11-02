@@ -18,11 +18,13 @@ public abstract class BasePage {
         this.driver = DriverFactory.getDriver();
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(Constants.EXPLICIT_WAIT));
         this.waits = new WaitHelper(driver, wait);
-        this.actions = new GenericMethods(driver);
+        this.actions = new GenericMethods(driver, waits);
     }
 
     // ---------- Common low-level wrappers (delegates to helpers) ----------
-    protected WebElement find(By locator) { return driver.findElement(locator); }
+    protected WebElement find(By locator) { 
+    	return driver.findElement(locator); 
+    	}
 
     protected void click(By locator) {
         waits.waitForClickable(locator);
@@ -30,12 +32,14 @@ public abstract class BasePage {
         LoggerUtil.info("Clicked: " + locator.toString());
     }
 
-    protected void type(By locator, String text) {
+    protected void type(By locator, String text) throws InterruptedException {
         waits.waitForVisible(locator);
         WebElement el = find(locator);
         el.clear();
         el.sendKeys(text);
         LoggerUtil.info("Typed into " + locator.toString() + " => " + text);
+        el.sendKeys(Keys.TAB);
+        waits.smallPause(2000);
     }
 
     protected String getText(By locator) {
@@ -57,6 +61,6 @@ public abstract class BasePage {
     protected void scrollIntoView(By locator) { actions.scrollIntoView(find(locator)); }
 
     // ---------- Navigation helpers ----------
-    public String getPageTitle() { return driver.getTitle(); }
-    public String getCurrentUrl() { return driver.getCurrentUrl(); }
+    public String getPageTitle() { return actions.getTitle(); }
+    public String getCurrentUrl() { return actions.getCurrentUrl(); }
 }

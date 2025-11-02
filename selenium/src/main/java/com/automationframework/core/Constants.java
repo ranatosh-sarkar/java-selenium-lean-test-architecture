@@ -1,6 +1,6 @@
 package com.automationframework.core;
 
-public class Constants {
+public abstract class Constants {
 
     public static final int EXPLICIT_WAIT = 20;
     public static final int IMPLICIT_WAIT = 10;

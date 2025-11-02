@@ -5,10 +5,18 @@
       <class name="com.automationframework.tests.runners.CucumberTestRunner"/>
     </classes>
   </test>
+  
+  <listeners>
+    <listener class-name="com.automationframework.tests.listeners.TestListener"/>
+    <listener class-name="com.automationframework.tests.listeners.AllureHtmlAfterSuite"/>
+  </listeners>
 
+<!--
   <test name="Non-BDD">
     <classes>
       <class name="com.automationframework.tests.tests.LoginTests"/>
     </classes>
   </test>
+-->  
+
 </suite>

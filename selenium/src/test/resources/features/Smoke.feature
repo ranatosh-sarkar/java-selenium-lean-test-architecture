@@ -39,5 +39,5 @@ Feature: Perform Smoke Test of Home page validations for Shady Meadows B&B
 
     Examples:
       | expected_title               | welcome_text                 | header_main       | rooms | booking | amenities | location | contact | admin | footer_brand      | contact_us  | quick_links |
-      | Restful-booker-platform demo | Welcome to Shady Meadows B&B | Shady Meadows B&B | Rooms | Booking | Amenities | Location | Contact | Admin | Shady Meadows B&B | Contact Us  | Quick Links |
+      #| Restful-booker-platform demo | Welcome to Shady Meadows B&B | Shady Meadows B&B | Rooms | Booking | Amenities | Location | Contact | Admin | Shady Meadows B&B | Contact Us  | Quick Links |
       

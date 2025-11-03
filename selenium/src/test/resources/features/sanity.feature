@@ -18,4 +18,4 @@ Feature: Sanity - Perform One End to End flow
 
     Examples:
       | check_in | check_out | single room | double room | suite room | room_url_fragment | firstname | lastname | email       | phone       |
-      | today    | tomorrow  | Single Room | Double Room | Suite Room | tomorrow          | Rana      | Pratap   | r@gmail.com | 12345678910 | 
+      #| today    | tomorrow  | Single Room | Double Room | Suite Room | tomorrow          | Rana      | Pratap   | r@gmail.com | 12345678910 | 

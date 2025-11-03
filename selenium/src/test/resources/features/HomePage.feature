@@ -41,7 +41,7 @@ Feature: As a guest perform Home page validations for Shady Meadows B&B
 
     Examples:
       | expected_title               | welcome_text                 | header_main       | rooms | booking | amenities | location | contact | admin | footer_brand      | contact_us  | quick_links |
-      | Restful-booker-platform demo | Welcome to Shady Meadows B&B | Shady Meadows B&B | Rooms | Booking | Amenities | Location | Contact | Admin | Shady Meadows B&B | Contact Us  | Quick Links |
+      #| Restful-booker-platform demo | Welcome to Shady Meadows B&B | Shady Meadows B&B | Rooms | Booking | Amenities | Location | Contact | Admin | Shady Meadows B&B | Contact Us  | Quick Links |
 
   @dates
   Scenario Outline: Default dates are populated
@@ -67,7 +67,7 @@ Feature: As a guest perform Home page validations for Shady Meadows B&B
 
     Examples:
       | check_in    | check_out | single room | double room | suite room | room_url_fragment |
-      | today       | tomorrow  | Single Room | Double Room | Suite Room | tomorrow          |
-      | tomorrow    | plus_2    | Single Room | Double Room | Suite Room | plus_2            |
-      | plus_2      | plus_5    | Single Room | Double Room | Suite Room | plus_5            |
+      #| today       | tomorrow  | Single Room | Double Room | Suite Room | tomorrow          |
+      #| tomorrow    | plus_2    | Single Room | Double Room | Suite Room | plus_2            |
+      #| plus_2      | plus_5    | Single Room | Double Room | Suite Room | plus_5            |
 

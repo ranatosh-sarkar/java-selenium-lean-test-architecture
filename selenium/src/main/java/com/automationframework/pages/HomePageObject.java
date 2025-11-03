@@ -78,21 +78,32 @@ public class HomePageObject extends BasePage {
     }
 
     /** Cross-platform type/clear; special handling for Windows date inputs. */
-    private void clearTypeTabWindows(By locator, String value) {
-        WebElement el = waits.waitForVisible(locator);
-        el.click();
+private void clearTypeTabWindows(By locator, String value) {
+    WebElement el = waits.waitForVisible(locator);
+    el.click();
 
-        if (isWindows()) {
-            el.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-            el.sendKeys(Keys.BACK_SPACE);
-            el.sendKeys(value);
-            el.sendKeys(Keys.TAB);
-        } else {
-            try { el.clear(); } catch (Exception ignored) {}
-            el.sendKeys(value);
-            el.sendKeys(Keys.TAB);
-        }
+    if (isWindows()) {
+        el.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+        el.sendKeys(Keys.BACK_SPACE);
+        el.sendKeys(value);
+        el.sendKeys(Keys.TAB);
+    } else {
+        try { el.clear(); } catch (Exception ignored) {}
+        el.sendKeys(value);
+        el.sendKeys(Keys.TAB);
     }
+
+    // Fallback to guarantee the input commits and events fire
+    try {
+        ((JavascriptExecutor) driver).executeScript(
+            "arguments[0].value = arguments[1];" +
+            "arguments[0].dispatchEvent(new Event('change',{bubbles:true}));" +
+            "arguments[0].dispatchEvent(new Event('input',{bubbles:true}));",
+            el, value
+        );
+    } catch (Exception ignored) {}
+}
+
 
     private boolean isWindows() {
         return System.getProperty("os.name", "").toLowerCase().contains("win");
@@ -139,23 +150,32 @@ public class HomePageObject extends BasePage {
      * Validates reservation URL has expected path and ISO yyyy-MM-dd query params
      * derived from date tokens.
      */
-    public HomePageObject verifyReservationUrl(String checkInToken, String checkOutToken, String fragmentToken) {
-        String url = currentUrl();
+public HomePageObject verifyReservationUrl(String checkInToken, String checkOutToken, String fragmentToken) {
+    String checkInIso  = toIso(checkInToken);
+    String checkOutIso = toIso(checkOutToken);
+    String fragIso     = toIso(fragmentToken);
 
-        String checkInIso  = toIso(checkInToken);
-        String checkOutIso = toIso(checkOutToken);
-        String fragIso     = toIso(fragmentToken);
+    // Wait until URL reflects the expected params (after clicking)
+    new WebDriverWait(driver, Duration.ofSeconds(10))
+        .until(d -> {
+            String u = d.getCurrentUrl();
+            return u.contains("/reservation/")
+                && u.contains("checkin=" + checkInIso)
+                && u.contains("checkout=" + checkOutIso);
+        });
 
-        LoggerUtil.info("[VERIFY URL] url=" + url +
-                " | checkin=" + checkInIso + " | checkout=" + checkOutIso + " | frag=" + fragIso);
+    String url = currentUrl();
+    LoggerUtil.info("[VERIFY URL] url=" + url +
+        " | checkin=" + checkInIso + " | checkout=" + checkOutIso + " | frag=" + fragIso);
 
-        Assert.assertTrue(url.contains("/reservation/"),       "Reservation path missing. URL=" + url);
-        Assert.assertTrue(url.contains("checkin=" + checkInIso),"Missing/incorrect checkin in URL. URL=" + url);
-        Assert.assertTrue(url.contains("checkout=" + checkOutIso),"Missing/incorrect checkout in URL. URL=" + url);
-        Assert.assertTrue(url.contains(fragIso),                "Expected fragment ISO date not found: " + fragIso);
+    Assert.assertTrue(url.contains("/reservation/"),              "Reservation path missing. URL=" + url);
+    Assert.assertTrue(url.contains("checkin=" + checkInIso),      "Missing/incorrect checkin in URL. URL=" + url);
+    Assert.assertTrue(url.contains("checkout=" + checkOutIso),    "Missing/incorrect checkout in URL. URL=" + url);
+    Assert.assertTrue(url.contains(fragIso),                      "Expected fragment ISO date not found: " + fragIso);
 
-        return this;
-    }
+    return this;
+}
+
 
     /** Validates the page's H1 equals any of the expected room names. */
     public HomePageObject verifyRoomPageTitle(String single, String doubleRoom, String suite) {

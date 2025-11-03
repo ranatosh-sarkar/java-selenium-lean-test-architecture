@@ -51,8 +51,10 @@ jobs:
       - name: Run tests (writes RAW to allure-results/)
         working-directory: selenium
         run: mvn -B -DskipTests=false test
+        continue-on-error: true
 
       - name: Generate Allure HTML (selenium/reports/allure-report-<ts>/)
+        if: always()
         working-directory: selenium
         run: mvn -B io.qameta.allure:allure-maven:2.12.0:report
 

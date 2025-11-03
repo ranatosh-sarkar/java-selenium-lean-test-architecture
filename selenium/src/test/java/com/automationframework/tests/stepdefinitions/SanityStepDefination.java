@@ -12,10 +12,12 @@ public class SanityStepDefination {
 	public void enter_my_details(String firstName, String lastName, String email, String phone) throws InterruptedException {
         sanityPageObject.enterUserDetails(firstName, lastName, email, phone);
         sanityPageObject.clickReserveNow();
+        System.out.println("Passed: enter_my_details()");
 	}
 
 	@Then("I verify {string} message")
 	public void i_verify_message(String expected) {
         sanityPageObject.verifyBookingConfirmed(expected);
+        System.out.println("Passed: i_verify_message()");
 	}
 }

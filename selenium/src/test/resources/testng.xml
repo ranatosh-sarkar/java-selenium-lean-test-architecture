@@ -8,7 +8,7 @@
   
   <listeners>
     <listener class-name="com.automationframework.tests.listeners.TestListener"/>
-    <listener class-name="com.automationframework.tests.listeners.GenerateAllureHtml"/>
+    <listener class-name="com.automationframework.tests.listeners.AllureHtmlReportsListener"/>
   </listeners>
 
 <!--

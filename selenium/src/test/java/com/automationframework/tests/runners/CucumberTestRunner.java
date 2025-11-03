@@ -7,7 +7,7 @@ import org.testng.annotations.Listeners;
 
 @Listeners({
   com.automationframework.tests.listeners.TestListener.class,
-  com.automationframework.tests.listeners.GenerateAllureHtml.class
+  com.automationframework.tests.listeners.AllureHtmlReportsListener.class
 })
 @CucumberOptions(
     features = "src/test/resources/features",

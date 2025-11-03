@@ -13,9 +13,9 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-public final class AllureReportServer {
+public final class GenerateAllureHTMLReports {
 
-    private AllureReportServer() {}
+    private GenerateAllureHTMLReports() {}
 
     public static void main(String[] args) throws Exception {
         // 1) Resolve report root

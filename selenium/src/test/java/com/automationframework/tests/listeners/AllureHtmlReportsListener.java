@@ -7,7 +7,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class GenerateAllureHtml implements IExecutionListener {
+public class AllureHtmlReportsListener implements IExecutionListener {
 
   @Override public void onExecutionStart() { }
 
@@ -15,11 +15,11 @@ public class GenerateAllureHtml implements IExecutionListener {
   public void onExecutionFinish() {
     // --- Guards ---
     if (isCI()) {
-      System.out.println("[GenerateAllureHtml] CI detected → skipping HTML build (handled by pipeline).");
+      System.out.println("[AllureHtmlReportsListener] CI detected → skipping HTML build (handled by pipeline).");
       return;
     }
     if (!isAutoHtmlEnabled()) {
-      System.out.println("[GenerateAllureHtml] -Dallure.auto.html=false → skipping HTML build.");
+      System.out.println("[AllureHtmlReportsListener] -Dallure.auto.html=false → skipping HTML build.");
       return;
     }
 
@@ -29,7 +29,7 @@ public class GenerateAllureHtml implements IExecutionListener {
       final String resultsDir = base + File.separator + "allure-results";
       final String reportDir  = base + File.separator + "reports" + File.separator + "allure-report-" + ts;
 
-      System.out.println("[GenerateAllureHtml] Building Allure HTML from: " + resultsDir);
+      System.out.println("[AllureHtmlReportsListener] Building Allure HTML from: " + resultsDir);
 
       InvocationRequest req = new DefaultInvocationRequest();
       req.setPomFile(new File(base, "pom.xml"));
@@ -46,19 +46,19 @@ public class GenerateAllureHtml implements IExecutionListener {
       File mvnExe = findMavenExecutable(findMavenHome());
       if (mvnExe != null && mvnExe.isFile()) {
         invoker.setMavenExecutable(mvnExe);
-        System.out.println("[GenerateAllureHtml] Using Maven exec: " + mvnExe);
+        System.out.println("[AllureHtmlReportsListener] Using Maven exec: " + mvnExe);
       } else {
-        System.err.println("[GenerateAllureHtml] Maven/mvnw not found. " +
+        System.err.println("[AllureHtmlReportsListener] Maven/mvnw not found. " +
             "Install Maven or add Wrapper (mvnw) to the repo. Skipping HTML build.");
         return; // do not fail tests
       }
 
       InvocationResult res = invoker.execute(req);
       if (res.getExitCode() != 0) {
-        System.err.println("[GenerateAllureHtml] Allure report FAILED. " +
+        System.err.println("[AllureHtmlReportsListener] Allure report FAILED. " +
             (res.getExecutionException() != null ? res.getExecutionException().getMessage() : ""));
       } else {
-        System.out.println("[GenerateAllureHtml] Allure report ready: " + reportDir + File.separator + "index.html");
+        System.out.println("[AllureHtmlReportsListener] Allure report ready: " + reportDir + File.separator + "index.html");
       }
     } catch (Exception e) {
       e.printStackTrace();

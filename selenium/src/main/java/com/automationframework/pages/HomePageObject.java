@@ -3,6 +3,7 @@ package com.automationframework.pages;
 import com.automationframework.core.BasePage;
 import com.automationframework.utils.LoggerUtil;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -64,49 +65,17 @@ public class HomePageObject extends BasePage {
      */
     public HomePageObject setBookingDates(String checkInToken, String checkOutToken) throws InterruptedException {
         scrollIntoView(SCROLL_TOVIEW_CHECKIN_SECTION);
-        Thread.sleep(2000); // TODO: replace with an explicit wait for the section/input to be interactable
+        Thread.sleep(2000); 
 
         String checkInUi  = actions.resolveDateToken(checkInToken);   // dd/MM/yyyy (UI format)
         String checkOutUi = actions.resolveDateToken(checkOutToken);
 
-        clearTypeTabWindows(CHECK_IN_INPUT,  checkInUi);
+        actions.clearTypeTabWindows(CHECK_IN_INPUT,  checkInUi);
         Thread.sleep(2000); // TODO: replace with explicit wait
-        clearTypeTabWindows(CHECK_OUT_INPUT, checkOutUi);
+        actions.clearTypeTabWindows(CHECK_OUT_INPUT, checkOutUi);
 
         LoggerUtil.info("[SET DATES] checkIn=" + checkInUi + "  checkOut=" + checkOutUi);
         return this;
-    }
-
-    /** Cross-platform type/clear; special handling for Windows date inputs. */
-private void clearTypeTabWindows(By locator, String value) {
-    WebElement el = waits.waitForVisible(locator);
-    el.click();
-
-    if (isWindows()) {
-        el.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-        el.sendKeys(Keys.BACK_SPACE);
-        el.sendKeys(value);
-        el.sendKeys(Keys.TAB);
-    } else {
-        try { el.clear(); } catch (Exception ignored) {}
-        el.sendKeys(value);
-        el.sendKeys(Keys.TAB);
-    }
-
-    // Fallback to guarantee the input commits and events fire
-    try {
-        ((JavascriptExecutor) driver).executeScript(
-            "arguments[0].value = arguments[1];" +
-            "arguments[0].dispatchEvent(new Event('change',{bubbles:true}));" +
-            "arguments[0].dispatchEvent(new Event('input',{bubbles:true}));",
-            el, value
-        );
-    } catch (Exception ignored) {}
-}
-
-
-    private boolean isWindows() {
-        return System.getProperty("os.name", "").toLowerCase().contains("win");
     }
 
     /**

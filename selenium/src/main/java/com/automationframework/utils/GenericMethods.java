@@ -6,15 +6,44 @@ import org.openqa.selenium.interactions.Actions;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.time.LocalDate; 
-import java.time.format.DateTimeFormatter; 
-import java.util.Locale;
 
 public class GenericMethods {
 
     private final WebDriver driver;
     private final Actions actions;
     private final WaitHelper waits;
+    
+    /** Cross-platform type/clear; special handling for Windows date inputs. */
+    public void clearTypeTabWindows(By locator, String value) {
+        WebElement el = waits.waitForVisible(locator);
+        el.click();
+
+        if (isWindows()) {
+            el.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+            el.sendKeys(Keys.BACK_SPACE);
+            el.sendKeys(value);
+            el.sendKeys(Keys.TAB);
+        } else {
+            try { el.clear(); } catch (Exception ignored) {}
+            el.sendKeys(value);
+            el.sendKeys(Keys.TAB);
+        }
+
+        // Fallback to guarantee the input commits and events fire
+        try {
+            ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].value = arguments[1];" +
+                "arguments[0].dispatchEvent(new Event('change',{bubbles:true}));" +
+                "arguments[0].dispatchEvent(new Event('input',{bubbles:true}));",
+                el, value
+            );
+        } catch (Exception ignored) {}
+    }
+
+
+        private boolean isWindows() {
+            return System.getProperty("os.name", "").toLowerCase().contains("win");
+        }
     
  // ISO date used in URL query params (yyyy-MM-dd)
     private static final DateTimeFormatter ISO_FMT = DateTimeFormatter.ISO_LOCAL_DATE;

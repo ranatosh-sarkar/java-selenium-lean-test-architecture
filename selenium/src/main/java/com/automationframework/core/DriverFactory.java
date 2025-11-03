@@ -21,14 +21,11 @@ public final class DriverFactory {
     private DriverFactory() {}
 
     private static boolean isCI() {
-        // GitHub Actions exposes these; true in CI, false locally
         return "true".equalsIgnoreCase(System.getenv("CI"))
             || "true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"));
     }
 
-    public static WebDriver getDriver() {
-        return DRIVER.get();
-    }
+    public static WebDriver getDriver() { return DRIVER.get(); }
 
     public static void setDriver(BrowserType browser) {
         WebDriver webDriver;
@@ -38,7 +35,8 @@ public final class DriverFactory {
                 WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions opts = new FirefoxOptions();
                 if (isCI()) {
-                    opts.addArguments("-headless");       // headless in CI
+                    // Headless and desktop viewport in CI
+                    opts.addArguments("-headless");               // firefox flag
                     opts.addArguments("--width=1920", "--height=1080");
                 }
                 webDriver = new FirefoxDriver(opts);
@@ -49,9 +47,14 @@ public final class DriverFactory {
                 WebDriverManager.edgedriver().setup();
                 EdgeOptions opts = new EdgeOptions();
                 if (isCI()) {
-                    opts.addArguments("--headless=new", "--no-sandbox",
-                            "--disable-dev-shm-usage", "--disable-gpu",
-                            "--window-size=1920,1080");
+                    // Chromium-safe flags for CI/containers
+                    opts.addArguments(
+                        "--headless=new",
+                        "--window-size=1920,1080",
+                        "--disable-gpu",
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage"
+                    );
                 }
                 webDriver = new EdgeDriver(opts);
                 break;
@@ -61,17 +64,22 @@ public final class DriverFactory {
             default: {
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions opts = new ChromeOptions();
+
                 if (isCI()) {
-                    // Safe flags for containers/VMs
-                    opts.addArguments("--headless=new", "--no-sandbox",
-                            "--disable-dev-shm-usage", "--disable-gpu",
-                            "--window-size=1920,1080");
-                    // If Chrome path is provided by the runner, honor it
+                    opts.addArguments(
+                        "--headless=new",
+                        "--window-size=1920,1080",
+                        "--disable-gpu",
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage"
+                    );
+                    // GitHub runner exposes Chrome path
                     String chromeBin = System.getenv("CHROME_BIN");
                     if (chromeBin != null && !chromeBin.isBlank()) {
                         opts.setBinary(chromeBin);
                     }
                 }
+
                 webDriver = new ChromeDriver(opts);
                 break;
             }
@@ -79,7 +87,9 @@ public final class DriverFactory {
 
         webDriver.manage().timeouts()
                 .implicitlyWait(Duration.ofSeconds(Constants.IMPLICIT_WAIT));
-        webDriver.manage().window().maximize();   // headed locally; harmless in CI headless
+
+        // In headed local runs, maximize; in CI headless the window-size already applies.
+        try { webDriver.manage().window().maximize(); } catch (Exception ignored) {}
 
         DRIVER.set(webDriver);
         LoggerUtil.info("WebDriver initialized for browser: " + browser +
